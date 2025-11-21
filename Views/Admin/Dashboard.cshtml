@@ -1,0 +1,563 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-danger fw-bold">🔧 Admin Control Panel</h2>
+                    <p class="text-muted">System management and user administration</p>
+                </div>
+                <a href="@Url.Action("Logout", "Home")" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm p-3 border-start border-primary border-4">
+                <h6 class="text-muted text-uppercase mb-2">Total Patients</h6>
+                <h2 class="text-primary fw-bold">@ViewBag.Stats.totalPatients</h2>
+                <small class="text-success">@ViewBag.Stats.activePatients Active</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm p-3 border-start border-success border-4">
+                <h6 class="text-muted text-uppercase mb-2">Clinicians</h6>
+                <h2 class="text-success fw-bold">@ViewBag.Stats.totalClinicians</h2>
+                <small class="text-muted">@ViewBag.Stats.activeClinicians Active</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm p-3 border-start border-warning border-4">
+                <h6 class="text-muted text-uppercase mb-2">Pending Alerts</h6>
+                <h2 class="text-warning fw-bold">@ViewBag.Stats.pendingAlerts</h2>
+                <small class="text-muted">⚠️ Requires Review</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm p-3 border-start border-info border-4">
+                <h6 class="text-muted text-uppercase mb-2">Appointments</h6>
+                <h2 class="text-info fw-bold">@ViewBag.Stats.totalAppointments</h2>
+                <small class="text-muted">📅 Total Scheduled</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#usersTab">👥 User Management</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#sensorsTab">📟 Sensor Machines</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#appointmentsTab">📅 Appointments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#createTab">➕ Create New User</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Users Tab -->
+        <div id="usersTab" class="tab-pane fade show active">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">User Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th style="width: 200px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable">
+                                <tr>
+                                    <td colspan="6" class="text-center">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sensors Tab -->
+        <div id="sensorsTab" class="tab-pane fade">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Sensor Machine Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Serial Number</th>
+                                    <th>Model</th>
+                                    <th>Status</th>
+                                    <th>Assigned To</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sensorsTable">
+                                <tr>
+                                    <td colspan="5" class="text-center">Loading sensor machines...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Tab -->
+        <div id="appointmentsTab" class="tab-pane fade">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Appointment Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Clinician</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                    <th style="width: 180px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentsTable">
+                                <tr>
+                                    <td colspan="7" class="text-center">Loading appointments...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create User Tab -->
+        <div id="createTab" class="tab-pane fade">
+            <div class="row">
+                <!-- Create Patient -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Create Patient Account</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="createPatientForm">
+                                <div class="mb-3">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" name="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" name="phoneNumber">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date of Birth</label>
+                                    <input type="date" class="form-control" name="dateOfBirth" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="passwordHash" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Create Patient</button>
+                            </form>
+                            <div id="patientMessage" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Clinician -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Create Clinician Account</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="createClinicianForm">
+                                <div class="mb-3">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" name="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" name="phoneNumber">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Specialization</label>
+                                    <input type="text" class="form-control" name="specialization" placeholder="e.g., Wound Care Specialist">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="passwordHash" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">Create Clinician</button>
+                            </form>
+                            <div id="clinicianMessage" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Sensor Modal -->
+<div class="modal fade" id="assignSensorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Sensor Machine</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Sensor Machine</label>
+                    <input type="text" id="sensorSerialDisplay" class="form-control" readonly>
+                    <input type="hidden" id="sensorMachineId">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Assign to Patient</label>
+                    <select id="assignPatientSelect" class="form-select">
+                        <option value="">Select Patient...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="assignSensor()">Assign</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            loadSensors();
+            loadAppointments();
+            setupForms();
+        });
+
+        // Load users
+        function loadUsers() {
+            fetch('/Admin/GetAllUsers')
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        const table = document.getElementById('usersTable');
+                        table.innerHTML = result.users.map(u => `
+                            <tr>
+                                <td>${u.id}</td>
+                                <td>${u.name}</td>
+                                <td>${u.email}</td>
+                                <td><span class="badge bg-${u.role === 'Patient' ? 'primary' : 'success'}">${u.role}</span></td>
+                                <td><span class="badge bg-${u.status === 'Active' ? 'success' : 'secondary'}">${u.status}</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-outline-${u.status === 'Active' ? 'warning' : 'success'}" 
+                                                onclick="toggleUserStatus('${u.type}', ${u.id})"
+                                                title="${u.status === 'Active' ? 'Deactivate' : 'Activate'}">
+                                            ${u.status === 'Active' ? '🔒' : '🔓'}
+                                        </button>
+                                        <button class="btn btn-outline-danger" 
+                                                onclick="deleteUser('${u.type}', ${u.id}, '${u.name}')"
+                                                title="Delete User">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                });
+        }
+
+        // Toggle user status
+        function toggleUserStatus(userType, userId) {
+            if (!confirm('Are you sure you want to change this user\'s status?')) return;
+
+            fetch('/Admin/ToggleUserStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `userType=${userType}&userId=${userId}`
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('✅ User status updated');
+                    loadUsers();
+                } else {
+                    alert('❌ Failed to update status');
+                }
+            });
+        }
+
+        // Delete user
+        function deleteUser(userType, userId, userName) {
+            if (!confirm(`⚠️ Are you sure you want to DELETE ${userName}?\n\nThis will permanently remove:\n- User account\n- All their data\n- All associated records\n\nThis action CANNOT be undone!`)) {
+                return;
+            }
+
+            fetch('/Admin/DeleteUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `userType=${userType}&userId=${userId}`
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('✅ ' + result.message);
+                    loadUsers();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        }
+
+        // Load sensors
+        function loadSensors() {
+            fetch('/Admin/GetSensorMachines')
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        const table = document.getElementById('sensorsTable');
+                        table.innerHTML = result.machines.map(m => `
+                            <tr>
+                                <td><strong>${m.serialNumber}</strong></td>
+                                <td>${m.modelName}</td>
+                                <td><span class="badge bg-${m.isActive ? 'success' : 'secondary'}">${m.isActive ? 'Active' : 'Inactive'}</span></td>
+                                <td>${m.assignedTo}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="openAssignModal(${m.id}, '${m.serialNumber}')">
+                                        ${m.assignedTo === 'Unassigned' ? '➕ Assign' : '🔄 Reassign'}
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                });
+        }
+
+        // Load appointments
+        function loadAppointments() {
+            fetch('/Admin/GetAllAppointments')
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        const table = document.getElementById('appointmentsTable');
+                        if (result.appointments.length === 0) {
+                            table.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No appointments found</td></tr>';
+                            return;
+                        }
+                        table.innerHTML = result.appointments.map(a => `
+                            <tr>
+                                <td>${a.id}</td>
+                                <td>${a.patientName}</td>
+                                <td>${a.clinicianName}</td>
+                                <td>${new Date(a.appointmentDate).toLocaleString()}</td>
+                                <td><span class="badge bg-${a.status === 'Scheduled' ? 'success' : a.status === 'Cancelled' ? 'danger' : 'secondary'}">${a.status}</span></td>
+                                <td><small>${a.notes || '-'}</small></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        ${a.status === 'Scheduled' ? `
+                                            <button class="btn btn-outline-warning" 
+                                                    onclick="cancelAppointment(${a.id})"
+                                                    title="Cancel Appointment">
+                                                ❌
+                                            </button>
+                                        ` : ''}
+                                        <button class="btn btn-outline-danger" 
+                                                onclick="deleteAppointment(${a.id})"
+                                                title="Delete Appointment">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                });
+        }
+
+        // Cancel appointment
+        function cancelAppointment(appointmentId) {
+            if (!confirm('Cancel this appointment?')) return;
+
+            fetch('/Admin/CancelAppointment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `appointmentId=${appointmentId}`
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('✅ ' + result.message);
+                    loadAppointments();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            });
+        }
+
+        // Delete appointment
+        function deleteAppointment(appointmentId) {
+            if (!confirm('⚠️ Permanently delete this appointment?\n\nThis action cannot be undone!')) return;
+
+            fetch('/Admin/DeleteAppointment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `appointmentId=${appointmentId}`
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('✅ ' + result.message);
+                    loadAppointments();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            });
+        }
+
+        // Open assign sensor modal
+        function openAssignModal(machineId, serialNumber) {
+            document.getElementById('sensorMachineId').value = machineId;
+            document.getElementById('sensorSerialDisplay').value = serialNumber;
+
+            // Load patients for dropdown
+            fetch('/Admin/GetAllUsers')
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        const patients = result.users.filter(u => u.role === 'Patient');
+                        const select = document.getElementById('assignPatientSelect');
+                        select.innerHTML = '<option value="">Select Patient...</option>' +
+                            patients.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                    }
+                });
+
+            new bootstrap.Modal(document.getElementById('assignSensorModal')).show();
+        }
+
+        // Assign sensor
+        function assignSensor() {
+            const machineId = document.getElementById('sensorMachineId').value;
+            const patientId = document.getElementById('assignPatientSelect').value;
+
+            if (!patientId) {
+                alert('Please select a patient');
+                return;
+            }
+
+            fetch('/Admin/AssignSensorMachine', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `machineId=${machineId}&patientId=${patientId}`
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('✅ Sensor machine assigned successfully');
+                    bootstrap.Modal.getInstance(document.getElementById('assignSensorModal')).hide();
+                    loadSensors();
+                } else {
+                    alert('❌ Failed to assign sensor');
+                }
+            });
+        }
+
+        // Setup forms
+        function setupForms() {
+            // Patient form
+            document.getElementById('createPatientForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+
+                fetch('/Admin/CreatePatient', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    const msgDiv = document.getElementById('patientMessage');
+                    if (result.success) {
+                        msgDiv.innerHTML = '<div class="alert alert-success">✅ Patient created successfully!</div>';
+                        this.reset();
+                        loadUsers();
+                    } else {
+                        msgDiv.innerHTML = '<div class="alert alert-danger">❌ Failed: ' + result.message + '</div>';
+                    }
+                });
+            });
+
+            // Clinician form
+            document.getElementById('createClinicianForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+
+                fetch('/Admin/CreateClinician', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    const msgDiv = document.getElementById('clinicianMessage');
+                    if (result.success) {
+                        msgDiv.innerHTML = '<div class="alert alert-success">✅ Clinician created successfully!</div>';
+                        this.reset();
+                        loadUsers();
+                    } else {
+                        msgDiv.innerHTML = '<div class="alert alert-danger">❌ Failed: ' + result.message + '</div>';
+                    }
+                });
+            });
+        }
+    </script>
+}
